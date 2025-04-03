@@ -57,6 +57,30 @@ func (s *SnippetStore) InsertSnippet(snippet model.Snippet) (int64, error) {
 	return result.LastInsertId()
 }
 
+func (s *SnippetStore) ListSnippets() ([]model.Snippet, error) {
+	rows, err := s.db.Query(`SELECT id, title, tags, content, created_at FROM snippets`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var snippets []model.Snippet
+	for rows.Next() {
+		var snip model.Snippet
+		err := rows.Scan(&snip.ID, &snip.Title, &snip.Tags, &snip.Content, &snip.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+		snippets = append(snippets, snip)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return snippets, nil
+}
+
 func joinTags(tags []string) string {
 	return strings.Join(tags, ",")
 }
