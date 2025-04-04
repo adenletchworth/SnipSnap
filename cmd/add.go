@@ -5,7 +5,6 @@ import (
 	"SnipSnap/model"
 	"fmt"
 	"log"
-	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -23,7 +22,7 @@ like programming language or description.`,
 
 		snippet := model.Snippet{
 			Title:   title,
-			Tags:    strings.Split(tags, ","),
+			Tags:    tags,
 			Content: codeContent,
 		}
 

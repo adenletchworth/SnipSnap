@@ -1,1 +1,3 @@
 embed_server/venv
+embed_server/__pycache__
+snippets.db
