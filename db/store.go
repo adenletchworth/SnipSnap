@@ -73,6 +73,18 @@ func (s *SnippetStore) InsertSnippet(snippet model.Snippet) (int64, error) {
 	return result.LastInsertId()
 }
 
+func (s *SnippetStore) DeleteSnippetWithID(ID uint) error {
+	res, err := s.db.Exec(`DELETE FROM snippets WHERE id = ?`, ID)
+	if err != nil {
+		return err
+	}
+	count, _ := res.RowsAffected()
+	if count == 0 {
+		return fmt.Errorf("no snippet with ID %d", ID)
+	}
+	return nil
+}
+
 func (s *SnippetStore) ListSnippets() ([]model.Snippet, error) {
 	rows, err := s.db.Query(`SELECT id, title, tags, content, created_at FROM snippets`)
 	if err != nil {
