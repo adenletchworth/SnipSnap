@@ -5,6 +5,7 @@ import (
 	"SnipSnap/model"
 	"database/sql"
 	"fmt"
+	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -143,6 +144,29 @@ func (s *SnippetStore) ListSnippetsWithEmbedding() ([]model.IndexedSnippet, erro
 	}
 
 	return results, nil
+}
+
+func (s *SnippetStore) UpdateByID(ID uint, updates map[string]interface{}) error {
+	if len(updates) == 0 {
+		return nil
+	}
+
+	setClauses := []string{}
+	args := []interface{}{}
+
+	for key, value := range updates {
+		setClauses = append(setClauses, fmt.Sprintf("%s = ?", key))
+		args = append(args, value)
+	}
+
+	setSQL := strings.Join(setClauses, ", ")
+
+	query := fmt.Sprintf("UPDATE snippets SET %s WHERE id = ?", setSQL)
+	args = append(args, ID)
+
+	_, err := s.db.Exec(query, args...)
+
+	return err
 }
 
 // func joinTags(tags []string) string {
